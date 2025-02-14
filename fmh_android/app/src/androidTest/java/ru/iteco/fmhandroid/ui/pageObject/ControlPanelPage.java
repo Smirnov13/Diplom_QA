@@ -8,6 +8,7 @@ import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
 import android.view.View;
@@ -16,6 +17,7 @@ import androidx.test.espresso.ViewInteraction;
 
 import org.hamcrest.Matcher;
 
+import io.qameta.allure.kotlin.Allure;
 import io.qameta.allure.kotlin.Step;
 import ru.iteco.fmhandroid.R;
 
@@ -68,6 +70,7 @@ public class ControlPanelPage {
 
     @Step("Создание новой новости")
     public void clickCreateNews() {
+        Allure.step("Открытие экрана создания новости");
         createNewsButton.check(matches(isDisplayed()));
         createNewsButton.perform(click());
     }
@@ -93,6 +96,7 @@ public class ControlPanelPage {
 
     @Step("Заполнение данных новости")
     public void fillNewsDetails(String description, String titleName) {
+        Allure.step("Заполнение заголовка: " + titleName + " и описания");
         onView(chooseCategoryButton()).check(matches(isDisplayed()));
         onView(chooseCategoryButton()).perform(click());
         onView(categoryAnnouncement()).check(matches(isDisplayed()));
@@ -126,5 +130,35 @@ public class ControlPanelPage {
         onView(editNewsButton()).check(matches(isDisplayed()));
         onView(editNewsButton()).perform(click());
         controlPanelPage.check(matches(isDisplayed()));
+    }
+
+    @Step("Проверка наличия новости")
+    public boolean isNewsDisplayed(String title) {
+        onView(withText(title)).check(matches(isDisplayed()));
+        return true;
+    }
+
+    @Step("Проверка обновления описания новости")
+    public boolean isNewsDescriptionUpdated(String title, String newDescription) {
+        onView(withText(newDescription)).check(matches(isDisplayed()));
+        return true;
+    }
+
+    @Step("Проверка смены статуса новости для {title}")
+    public boolean isNewsStatusChanged(String title) {
+        try {
+            onView(withText(title)).check(matches(isDisplayed()));
+            onView(withId(R.id.switcher)).check(matches(isDisplayed()));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
+    @Step("Проверка наличия ошибки при создании новости")
+    public boolean isErrorDisplayed() {
+        onView(withText("Ошибка")).check(matches(isDisplayed()));
+        return true;
     }
 }
