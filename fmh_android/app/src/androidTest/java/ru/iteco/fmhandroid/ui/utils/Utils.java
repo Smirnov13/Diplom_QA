@@ -18,10 +18,10 @@ import org.hamcrest.Matcher;
 import java.util.concurrent.TimeoutException;
 
 import ru.iteco.fmhandroid.R;
-import ru.iteco.fmhandroid.ui.pageObject.AuthPage;
+import ru.iteco.fmhandroid.ui.steps.AuthSteps;
 
 public class Utils {
-    AuthPage authPage = new AuthPage();
+    AuthSteps authSteps = new AuthSteps();
 
     public void downloadApp(){
         elementWaiting(withId(R.id.splashscreen_image_view), 5000);
