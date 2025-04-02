@@ -1,38 +1,56 @@
 package ru.iteco.fmhandroid.ui.pages;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
 
 import androidx.test.espresso.ViewInteraction;
 
 import ru.iteco.fmhandroid.R;
 
 public class AboutPage {
-    private final ViewInteraction privacyPolicyText = onView(withText("Политика конфиденциальности"));
-    private final ViewInteraction termsOfUseText = onView(withText("Пользовательское соглашение"));
-    private final ViewInteraction privacyPolicyLink = onView(withId(R.id.about_privacy_policy_value_text_view));
-    private final ViewInteraction termsOfUseLink = onView(withId(R.id.about_terms_of_use_value_text_view));
-    private final ViewInteraction errorMessage = onView(withId(R.id.news_item_publication_date_text_view));
 
+    private final ViewInteraction privacyPolicyView = onView(
+            allOf(withId(R.id.about_privacy_policy_label_text_view),
+                    withText("Privacy Policy:"),
+                    isDisplayed()));
 
-    public ViewInteraction getPrivacyPolicyText() {
-        return privacyPolicyText;
+    private final ViewInteraction termsOfUseView = onView(
+            allOf(withId(R.id.about_terms_of_use_label_text_view),
+                    withText("Terms of use:"),
+                    isDisplayed()));
+
+    private final ViewInteraction iTecoView = onView(
+            allOf(withId(R.id.about_company_info_label_text_view),
+                    withText("© I-Teco, 2022"),
+                    isDisplayed()));
+
+    private final ViewInteraction versionView = onView(
+            allOf(withId(R.id.about_version_title_text_view),
+                    withText("Version:"),
+                    isDisplayed()));
+
+    private final int privacyPolicyViewId = R.id.about_privacy_policy_label_text_view;
+
+    public ViewInteraction getPrivacyPolicyView() {
+        return privacyPolicyView;
     }
 
-    public ViewInteraction getTermsOfUseText() {
-        return termsOfUseText;
+    public ViewInteraction getTermsOfUseView() {
+        return termsOfUseView;
     }
 
-    public ViewInteraction getPrivacyPolicyLink() {
-        return privacyPolicyLink;
+    public ViewInteraction getITecoView() {
+        return iTecoView;
     }
 
-    public ViewInteraction getTermsOfUseLink() {
-        return termsOfUseLink;
+    public ViewInteraction getVersionView() {
+        return versionView;
     }
 
-    public ViewInteraction getErrorMessage() {
-        return errorMessage;
+    public int getPrivacyPolicyViewId() {
+        return privacyPolicyViewId;
     }
 }

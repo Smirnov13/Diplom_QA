@@ -1,6 +1,7 @@
 package ru.iteco.fmhandroid.ui.pages;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
@@ -10,44 +11,51 @@ import androidx.test.espresso.ViewInteraction;
 import ru.iteco.fmhandroid.R;
 
 public class AuthPage {
-    private final ViewInteraction logoImage = onView(withId(R.id.trademark_image_view));
-    private final ViewInteraction usernameInput = onView(withId(R.id.login_text_input_layout));
-    private final ViewInteraction passwordInput = onView(withId(R.id.password_text_input_layout));
+
+    private final ViewInteraction inputLoginField = onView(allOf(withId(R.id.login_edit_text)));
+    private final ViewInteraction inputPasswordField = onView(allOf(withId(R.id.password_edit_text)));
     private final ViewInteraction enterButton = onView(withId(R.id.enter_button));
-    private final ViewInteraction errorText = onView(withText("Invalid credentials"));
-    private final ViewInteraction authorization = onView(allOf(withText("Authorization")));
-    private final ViewInteraction logInButton = onView(withId(R.id.authorization_image_button));
-    private final ViewInteraction logOutButton = onView(withText("Log out"));
+    private final ViewInteraction toastMessageSomethingWrong = onView(withText("Something went wrong. Try again later."));
+    private final ViewInteraction toastMessageEmptyLoginAndPassword = onView(withText("Login and password cannot be empty"));
+    private final ViewInteraction authorizationTextView = onView(allOf(withText("Authorization"), isDisplayed()));
 
-    public ViewInteraction getAuthorization() {
-        return authorization;
+    private final int enterButtonId = R.id.enter_button;
+    private final int loginTextInputLayoutId = R.id.login_text_input_layout;
+    private final int authorizationTextId = R.id.authorization_text_input_layout;
+
+    public ViewInteraction getInputLoginField() {
+        return inputLoginField;
     }
 
-    public ViewInteraction getLogInButton() {
-        return logInButton;
-    }
-
-    public ViewInteraction getLogOutButton() {
-        return logOutButton;
-    }
-
-    public ViewInteraction getUsernameInput() {
-        return usernameInput;
-    }
-
-    public ViewInteraction getLogoImage() {
-        return logoImage;
-    }
-
-    public ViewInteraction getPasswordInput() {
-        return passwordInput;
+    public ViewInteraction getInputPasswordField() {
+        return inputPasswordField;
     }
 
     public ViewInteraction getEnterButton() {
         return enterButton;
     }
 
-    public ViewInteraction getErrorText() {
-        return errorText;
+    public ViewInteraction getToastMessageSomethingWrong() {
+        return toastMessageSomethingWrong;
+    }
+
+    public ViewInteraction getToastMessageEmptyLoginAndPassword() {
+        return toastMessageEmptyLoginAndPassword;
+    }
+
+    public ViewInteraction getAuthorizationTextView() {
+        return authorizationTextView;
+    }
+
+    public int getEnterButtonId() {
+        return enterButtonId;
+    }
+
+    public int getLoginTextInputLayoutId() {
+        return loginTextInputLayoutId;
+    }
+
+    public int getAuthorizationTextId() {
+        return authorizationTextId;
     }
 }

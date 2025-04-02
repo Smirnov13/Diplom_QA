@@ -1,120 +1,149 @@
 package ru.iteco.fmhandroid.ui.steps;
 
-
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
+import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
+import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.allOf;
-
-import android.view.View;
-
-import androidx.test.espresso.ViewInteraction;
-
-import org.hamcrest.Matcher;
+import static ru.iteco.fmhandroid.ui.utils.Utils.waitForElement;
 
 import io.qameta.allure.kotlin.Allure;
-import io.qameta.allure.kotlin.Step;
 import ru.iteco.fmhandroid.R;
 import ru.iteco.fmhandroid.ui.pages.ControlPanelPage;
-
 public class ControlPanelSteps {
     private final ControlPanelPage controlPanelPage = new ControlPanelPage();
 
-    public void clickCreateNews() {
-        Allure.step("Открытие экрана создания новости");
-        controlPanelPage.getCreateNewsButton().check(matches(isDisplayed()));
-        controlPanelPage.getCreateNewsButton().perform(click());
+    public void verifySortButtonVisible() {
+        Allure.step("Проверка наличия кнопки сортировки");
+        onView(isRoot()).perform(waitForElement(controlPanelPage.getSortingButtonId(), 10000));
+        controlPanelPage.getSortingButton().check(matches(isDisplayed()));
     }
 
-    public void deleteNews(String title) {
-        Allure.step("Удаление новости");
-        onView(controlPanelPage.confirmButton()).perform(click());
+    public void verifyFilterButtonVisible() {
+        Allure.step("Проверка наличия кнопки фильтрации");
+        onView(isRoot()).perform(waitForElement(controlPanelPage.getFilterButtonId(), 10000));
+        controlPanelPage.getFilterButton().check(matches(isDisplayed()));
     }
 
-    public void editNews(String title) {
-        Allure.step("Редактирование новости");
-        onView(controlPanelPage.editButton()).perform(click());
+    public void verifyEditButtonVisible() {
+        Allure.step("Проверка наличия кнопки редактирования");
+        onView(isRoot()).perform(waitForElement(controlPanelPage.getEditButtonId(), 10000));
+        controlPanelPage.getEditButton().check(matches(isDisplayed()));
     }
 
-    public void toggleNewsStatus() {
-        Allure.step("Смена статуса новости");
-        controlPanelPage.getActiveSwitch().check(matches(isDisplayed()));
-        controlPanelPage.getActiveSwitch().perform(click());
-        onView(controlPanelPage.saveButton()).check(matches(isDisplayed()));
-        onView(controlPanelPage.saveButton()).perform(click());
-        controlPanelPage.getControlPanelPageView().check(matches(isDisplayed()));
+    public void clickEditButton() {
+        Allure.step("Нажатие кнопки редактирования");
+        onView(isRoot()).perform(waitForElement(controlPanelPage.getNewsListSwipeRefreshId(), 5000));
+        controlPanelPage.getEditButton().perform(click());
     }
 
-    @Step("Заполнение данных новости")
-    public void fillNewsDetails(String description, String titleName) {
-        Allure.step("Заполнение заголовка: " + titleName + " и описания");
-        onView(controlPanelPage.chooseCategoryButton()).check(matches(isDisplayed()));
-        onView(controlPanelPage.chooseCategoryButton()).perform(click());
-        onView(controlPanelPage.categoryAnnouncement()).check(matches(isDisplayed()));
-        onView(controlPanelPage.categoryAnnouncement()).perform(click(), replaceText("Объявление"), closeSoftKeyboard());
-        onView(controlPanelPage.titleField()).check(matches(isDisplayed()));
-        onView(controlPanelPage.titleField()).perform(click(), replaceText(titleName), closeSoftKeyboard());
-        onView(controlPanelPage.publishDateButton()).check(matches(isDisplayed()));
-        onView(controlPanelPage.publishDateButton()).perform(click());
-        onView(controlPanelPage.confirmButton()).check(matches(isDisplayed()));
-        onView(controlPanelPage.confirmButton()).perform(click());
-        onView(controlPanelPage.chooseTimeButton()).check(matches(isDisplayed()));
-        onView(controlPanelPage.chooseTimeButton()).perform(click());
-        onView(controlPanelPage.confirmButton()).perform(click());
-        onView(controlPanelPage.descriptionField()).check(matches(isDisplayed()));
-        onView(controlPanelPage.descriptionField()).perform(replaceText(description), closeSoftKeyboard());
-        onView(controlPanelPage.saveButton()).check(matches(isDisplayed()));
-        onView(controlPanelPage.saveButton()).perform(click());
+    public void clickAddNewsButton() {
+        Allure.step("Нажатие кнопки добавления новости");
+        onView(isRoot()).perform(waitForElement(controlPanelPage.getActionBarRootId(), 5000));
+        controlPanelPage.getAddNewsButton().perform(click());
     }
 
-    @Step("Редактирование существующей новости")
-    public void updateNews(String description) {
-        onView(controlPanelPage.descriptionField()).check(matches(isDisplayed()));
-        onView(controlPanelPage.descriptionField()).perform(replaceText(description), closeSoftKeyboard());
-        onView(controlPanelPage.saveButton()).check(matches(isDisplayed()));
-        onView(controlPanelPage.saveButton()).perform(click());
-        controlPanelPage.getControlPanelPageView().check(matches(isDisplayed()));
+    public void openCategorySelection() {
+        Allure.step("Выбор категории новости");
+        onView(isRoot()).perform(waitForElement(controlPanelPage.getNavHostFragmentId(), 5000));
+        onView(isRoot()).perform(waitForElement(controlPanelPage.getCategoryNewsId(), 5000));
+        controlPanelPage.getCategoryNews().perform(click());
     }
 
-    public void navigateToEditNews() {
-        Allure.step("Переход в режим редактирования новостей");
-        onView(controlPanelPage.editNewsButton()).check(matches(isDisplayed()));
-        onView(controlPanelPage.editNewsButton()).perform(click());
-        controlPanelPage.getControlPanelPageView().check(matches(isDisplayed()));
+    public void selectCategory(String category) {
+        Allure.step("Выбор категории новости: " + category);
+        onView(withText(category)).inRoot(isPlatformPopup()).perform(click());
     }
 
-    public boolean isNewsDisplayed(String title) {
-        Allure.step("Проверка наличия новости");
-        onView(withText(title)).check(matches(isDisplayed()));
-        return true;
+    public void enterNewsTitle(String title) {
+        Allure.step("Заполнение заголовка новости: " + title);
+        onView(isRoot()).perform(waitForElement(controlPanelPage.getNewsItemTitleTextInputLayoutId(), 5000));
+        controlPanelPage.getFieldInputTitleNews()
+                .perform(click(), replaceText(title), closeSoftKeyboard());
     }
 
-    public boolean isNewsDescriptionUpdated(String title, String newDescription) {
-        Allure.step("Проверка обновленного описания");
-        onView(withText(newDescription)).check(matches(isDisplayed()));
-        return true;
+    public void setCurrentDate() {
+        Allure.step("Выбор текущей даты");
+        onView(isRoot()).perform(waitForElement(controlPanelPage.getCreateDateTextInputLayoutId(), 3000));
+        controlPanelPage.getCreateDateInputLayout().perform(click());
+        controlPanelPage.getOkButton().perform(click());
     }
 
-    public boolean isNewsStatusChanged(String title) {
-        Allure.step("Проверка изменения статуса");
-        try {
-            onView(withText(title)).check(matches(isDisplayed()));
-            onView(withId(R.id.switcher)).check(matches(isDisplayed()));
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+    public void setCurrentTime() {
+        Allure.step("Выбор текущего времени");
+        onView(isRoot()).perform(waitForElement(controlPanelPage.getPublishTimeTextInputLayoutId(), 3000));
+        controlPanelPage.getPublishTimeInputLayout().perform(click());
+        controlPanelPage.getOkButton().perform(click());
     }
 
+    public void enterDescription(String text) {
+        Allure.step("Заполнение описания: " + text);
+        onView(isRoot()).perform(waitForElement(controlPanelPage.getDescriptionTextInputLayoutId(), 3000));
+        controlPanelPage.getDescriptionEditText().perform(click(), typeText(text), closeSoftKeyboard());
+    }
 
-    public boolean isErrorDisplayed() {
-        Allure.step("Проверка наличия ошибки");
-        onView(withText("Ошибка")).check(matches(isDisplayed()));
-        return true;
+    public void saveChanges() {
+        Allure.step("Нажатие кнопки сохранения");
+        onView(isRoot()).perform(waitForElement(R.id.save_button, 10000));
+        controlPanelPage.getSaveButton().perform(scrollTo(), click());
+    }
+
+    public void verifyPanelTitleVisible() {
+        Allure.step("Проверка видимости заголовка 'Control panel'");
+        onView(isRoot()).perform(waitForElement(R.id.news_list_recycler_view, 5000));
+        controlPanelPage.getControlPanelTitle().check(matches(withText("Control panel")));
+    }
+
+    public void verifyNewsHeaderVisible(String expectedTitle) {
+        Allure.step("Проверка видимости заголовка новости: " + expectedTitle);
+        onView(isRoot()).perform(waitForElement(R.id.news_item_material_card_view, 5000));
+        android.os.SystemClock.sleep(3000);
+        controlPanelPage.newsTitleTextView(expectedTitle).check(matches(withText(expectedTitle)));
+    }
+
+    public void clickOnFirstNews() {
+        Allure.step("Клик по первой новости в списке");
+        onView(isRoot()).perform(waitForElement(R.id.delete_news_item_image_view, 3000));
+        onView(isRoot()).perform(waitForElement(controlPanelPage.getNewsRecyclerViewId(), 3000));
+        controlPanelPage.getNewsRecyclerView().perform(actionOnItemAtPosition(0, click()));
+    }
+
+    public void verifyNewsContent(String expectedDescription) {
+        Allure.step("Проверка описания новости: " + expectedDescription);
+        onView(isRoot()).perform(waitForElement(R.id.news_item_publication_text_view, 5000));
+        controlPanelPage.getNewsDescriptionTextView().check(matches(withText(expectedDescription)));
+    }
+
+    public void removeNewsItem(String news) {
+        Allure.step("Удаление новости: " + news);
+        onView(isRoot()).perform(waitForElement(R.id.delete_news_item_image_view, 3000));
+        controlPanelPage.deleteNews(news).perform(click());
+    }
+
+    public void confirmDeletion() {
+        Allure.step("Подтверждение удаления (нажатие OK)");
+        onView(isRoot()).perform(waitForElement(android.R.id.button1, 10000));
+        controlPanelPage.getOkButtonDeleteOperation().perform(scrollTo(), click());
+    }
+
+    public void verifyTextAbsent(String text) {
+        Allure.step("Проверка отсутствия текста: " + text);
+        android.os.SystemClock.sleep(2000);
+        onView(withText(text)).check(doesNotExist());
+    }
+
+    public void editNewsItem(String text) {
+        Allure.step("Нажатие кнопки редактирования для новости: " + text);
+        android.os.SystemClock.sleep(2000);
+        controlPanelPage.editNews(text).perform(click());
     }
 }

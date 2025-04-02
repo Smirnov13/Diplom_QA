@@ -2,58 +2,67 @@ package ru.iteco.fmhandroid.ui.steps;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.RootMatchers.withDecorView;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static ru.iteco.fmhandroid.ui.utils.Utils.waitForElement;
+
+import android.view.View;
+
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import io.qameta.allure.kotlin.Allure;
-
-import ru.iteco.fmhandroid.R;
+import ru.iteco.fmhandroid.ui.AppActivity;
 import ru.iteco.fmhandroid.ui.pages.AuthPage;
-import ru.iteco.fmhandroid.ui.utils.Utils;
 
 public class AuthSteps {
-
     private final AuthPage authPage = new AuthPage();
-    private final Utils utils = new Utils();
 
-    public void fillCreds(String username, String password) {
-        Allure.step("Заполнение полей логина: " + username + " и пароля");
-        authPage.getUsernameInput().perform(replaceText(username), closeSoftKeyboard());
-        authPage.getPasswordInput().perform(replaceText(password), closeSoftKeyboard());
+    public void enterLogin(String login) {
+        Allure.step("Заполнение поля логина: " + login);
+        onView(isRoot()).perform(waitForElement(authPage.getLoginTextInputLayoutId(), 10000));
+        authPage.getInputLoginField().perform(replaceText(login));
     }
 
-    public void tapLoginButton() {
-        Allure.step("Клик по кнопке входа");
+    public void enterPassword(String password) {
+        Allure.step("Заполнение поля пароля: " + password);
+        authPage.getInputPasswordField().perform(replaceText(password));
+    }
+
+    public void clickSignInButton() {
+        Allure.step("Нажатие кнопки Sign In");
+        onView(isRoot()).perform(waitForElement(authPage.getEnterButtonId(), 5000));
         authPage.getEnterButton().perform(click());
     }
 
-    public void verifyLoginSuccess() {
-        Allure.step("Проверка успешного входа");
-        authPage.getLogoImage().check(matches(isDisplayed()));
+    public void verifyEmptyFieldsErrorMessage(ActivityScenarioRule<AppActivity> mActivityScenarioRule) {
+        Allure.step("Проверка сообщения о не пустом пароле и логине");
+        final View[] decorView = new View[1];
+        mActivityScenarioRule.getScenario().onActivity(activity -> {
+            decorView[0] = activity.getWindow().getDecorView();
+        });
+        authPage.getToastMessageEmptyLoginAndPassword()
+                .inRoot(withDecorView(not(is(decorView[0]))))
+                .check(matches(isDisplayed()));
     }
 
-    public void verifyLoginFailure() {
-        Allure.step("Проверка ошибки авторизации");
-        authPage.getErrorText().check(matches(isDisplayed()));
+    public void verifySomethingWrongErrorMessage(ActivityScenarioRule<AppActivity> mActivityScenarioRule) {
+        Allure.step("Проверка сообщения о том, что что-то пошло не так");
+        final View[] decorView = new View[1];
+        mActivityScenarioRule.getScenario().onActivity(activity -> {
+            decorView[0] = activity.getWindow().getDecorView();
+        });
+        authPage.getToastMessageSomethingWrong()
+                .inRoot(withDecorView(not(is(decorView[0]))))
+                .check(matches(isDisplayed()));
     }
 
-    public void logout() {
-        Allure.step("Выход из учетной записи");
-        authPage.getLogInButton().check(matches(isDisplayed()));
-        authPage.getLogInButton().perform(click());
-        onView(isRoot()).perform(utils.waitForElement(withText("Log out"), 5000));
-        authPage.getLogOutButton().check(matches(isDisplayed()));
-        authPage.getLogOutButton().perform(click());
-        authPage.getAuthorization().check(matches(isDisplayed()));
-    }
-    public void openAuthPage() {
-        Allure.step("Загрузка страницы авторизации");
-        utils.elementWaiting(withId(R.id.enter_button), 5000);
+    public void verifyAuthScreenElements() {
+        Allure.step("Проверка наличия текста авторизации");
+        onView(isRoot()).perform(waitForElement(authPage.getAuthorizationTextId(), 10000));
     }
 }
-

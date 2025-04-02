@@ -4,74 +4,50 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
-
-import androidx.test.espresso.ViewInteraction;
+import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
+import static ru.iteco.fmhandroid.ui.utils.Utils.waitForElement;
 
 import io.qameta.allure.kotlin.Allure;
-import io.qameta.allure.kotlin.Step;
-import ru.iteco.fmhandroid.R;
 import ru.iteco.fmhandroid.ui.pages.MainPage;
-
 public class MainSteps {
-
     private final MainPage mainPage = new MainPage();
 
-    public void openNewsSection() {
-        Allure.step("Открытие раздела 'Новости'");
-        mainPage.getMenuButton().check(matches(isDisplayed()));
-        mainPage.getMenuButton().perform(click());
-        mainPage.getNewsSectionButton().check(matches(isDisplayed()));
-        mainPage.getNewsSectionButton().perform(click());
-        mainPage.getNewsPage().check(matches(isDisplayed()));
+    public void verifyNewsHeaderVisible() {
+        Allure.step("Проверка надписи News на главной странице");
+        onView(isRoot()).perform(waitForElement(mainPage.getMainMenuImageButtonId(), 10000));
+        mainPage.getNewsLogoView().check(matches(isDisplayed()));
     }
 
-
-    public void openAboutSection() {
-        Allure.step("Открытие раздела 'О проекте'");
-        mainPage.getMenuButton().check(matches(isDisplayed()));
-        mainPage.getMenuButton().perform(click());
-        mainPage.getAboutSectionButton().check(matches(isDisplayed()));
-        mainPage.getAboutSectionButton().perform(click());
-        mainPage.getAboutPageVersion().check(matches(isDisplayed()));
+    public void verifyMissionButtonVisible() {
+        Allure.step("Проверка кнопки \"Наша миссия\" на главной странице");
+        mainPage.getOurMissionLogoView().check(matches(isDisplayed()));
     }
 
-    public void openMissionSection() {
-        Allure.step("Открытие раздела 'Наша миссия'");
-        mainPage.getMissionIconButton().check(matches(isDisplayed()));
-        mainPage.getMissionIconButton().perform(click());
-        mainPage.getMissionPageTitle().check(matches(isDisplayed()));
+    public void clickMissionButton() {
+        Allure.step("Нажатие на кнопку \"Наша миссия\" на главной странице");
+        onView(isRoot()).perform(waitForElement(mainPage.getMainMenuImageButtonId(), 10000));
+        mainPage.getOurMissionLogoView().perform(click());
     }
 
-    public boolean isNewsSectionDisplayed() {
-        Allure.step("Проверка отображения раздела 'Новости'");
-        return isElementDisplayed(mainPage.getNewsPage());
+    public void performLogout() {
+        Allure.step("Нажатие на кнопку Log Out");
+        mainPage.getAuthorizationBlock().perform(click());
+        mainPage.getLogOutButton().perform(click());
     }
 
-    public boolean isAboutSectionDisplayed() {
-        Allure.step("Проверка отображения раздела 'О проекте'");
-        return isElementDisplayed(mainPage.getAboutPageVersion());
+    public void openMainMenu() {
+        Allure.step("Нажатие на бургер-меню");
+        onView(isRoot()).perform(waitForElement(mainPage.getMainMenuImageButtonId(), 10000));
+        mainPage.getBurgerMenu().perform(click());
     }
 
-
-    public boolean isMissionSectionDisplayed() {
-        Allure.step("Проверка отображения раздела 'Наша миссия'");
-        return isElementDisplayed(mainPage.getMissionPageTitle());
+    public void selectAboutInMenu() {
+        Allure.step("Нажатие на About в бургер-меню");
+        mainPage.getAboutBurgerMenu().perform(click());
     }
 
-    public boolean isError() {
-        Allure.step("Проверка отображения ошибки");
-        return isElementDisplayed(mainPage.getErrorTitle());
+    public void selectNewsInMenu() {
+        Allure.step("Нажатие на News в бургер-меню");
+        mainPage.getNewsBurgerMenu().perform(click());
     }
-
-    private boolean isElementDisplayed(ViewInteraction element) {
-        try {
-            element.check(matches(isDisplayed()));
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
 }
