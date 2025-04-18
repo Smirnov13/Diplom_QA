@@ -53,7 +53,7 @@ public class AuthorizationValidTests {
         authSteps.enterLogin(LOGIN_INCORRECT);
         authSteps.enterPassword(PASSWORD_INCORRECT);
         authSteps.clickSignInButton();
-        authSteps.verifyEmptyFieldsErrorMessage(mActivityScenarioRule);
+        authSteps.verifySomethingWrongErrorMessage(mActivityScenarioRule);
     }
 
     @Test
